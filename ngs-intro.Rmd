@@ -1,0 +1,174 @@
+---
+title: "Introduction to NGS analysis with R"
+author: "Mark Dunning"
+date: "13 May 2015"
+output: slidy_presentation
+toc: true
+---
+
+#Historical overview
+
+## Probe and target
+
+![probe-and-target](images/probe-and-target.png)
+
+## Two-colour arrays
+
+![two-colour](images/two-colour.png)
+
+## Single-Channel
+
+![one-colour](images/one-colour.png)
+
+## Look at a 'modern' microarray
+
+![illumina-chips](images/chiptypes.png)
+
+Around 48,000 genes per sample, 12 samples on a slide
+
+##Microarrays vs sequencing
+
+- Probe design issues
+- Limited number of novel findings
+- Genome coverage
+- Relative costs
+- Access to equipment 
+
+##Reports of the death of microarrays
+
+![microarray-dead](images/microarray-dead.png)
+
+##Reports of the death of microarrays. Greatly exagerated?
+http://core-genomics.blogspot.co.uk/2014/08/seqc-kills-microarrays-not-quite.html
+![hadfield-blog](images/hadfield-blog.png)
+
+
+##Are arrays still relevant?
+- We seem to be at the tipping point
+
+http://jermdemo.blogspot.co.uk/2012/01/when-can-we-expect-last-damn-microarray.html
+
+
+```{r echo=FALSE,eval=FALSE}
+##code from http://jermdemo.blogspot.co.uk/2012/01/when-can-we-expect-last-damn-microarray.html
+
+library("plyr")
+library("XML")
+library("ggplot2")
+library(reshape2) 
+
+#Concatenate SQL-style
+concat<-function(...,sep="",collapse=NULL){
+  strings<-list(...)
+  #NULL, NA
+  if(
+    all(unlist(llply(strings,length))>0)
+    &&
+      all(!is.na(unlist(strings)))
+    ){
+    do.call("paste", c(strings, list(sep = sep, collapse = collapse)))
+  }else{
+    NULL
+  }
+}
+                
+getCount<-function(term){function(year){
+  nihUrl<-concat("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=",term,"+",year,"[pdat]")
+  #cleanurl<-gsub('\\]','%5D',gsub('\\[','%5B',x=url))
+  #http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=microarray%5btitle%5d+2003%5bpdat%5d
+  xml<-xmlTreeParse(URLencode(nihUrl),isURL=TRUE)
+  #Data Mashups in R, pg17
+  as.numeric(xmlValue(xml$doc$children$eSearchResult$children$Count$children$text))
+}}
+ 
+years<-1995:2014
+df<-data.frame(type="obs",year=years,
+    Microarray=sapply(years,function(x){do.call(getCount('microarray[title]'),list(x))}),
+    NGS=sapply(years,function(x){do.call(getCount('"next generation sequencing"[title] OR "high-throughput sequencing"[title]'),list(x))})
+)
+
+df<-subset(df,year>=1997)
+mdf<-melt(df,id.vars=c("type","year"),variable_name="citation")
+ 
+c<-ggplot(mdf,aes(x=year))
+p<-c+geom_point(aes(y=value,color=variable),size=3) +
+  ylab("papers") +
+  stat_smooth(aes(y=value,color=variable),data=subset(mdf,variable=="Microarray"),method="loess") +
+  scale_x_continuous(breaks=seq(from=1997,to=2014,by=2))
+print(p)
+
+```
+
+
+# What are NGS data?
+
+## Different terminologies
+
+- *N*ext *G*eneration *S*equencing
+- *H*igh-*T*hroughput *S*equencing
+
+## Different Flavours
+
+- RNA-seq
+- ChIP-seq
+- Exome-seq
+- etc....
+- Paired-end / single-end
+
+## Illumina sequencing *
+
+- Link to video from their site
+
+\* Other sequencing technologies are available
+
+## Illumina sequencing
+
+\* Other sequencing technologies are available
+
+# Bioinformatics Issues
+
+## Image processing
+
+- Firecrest
+
+![firecrest](http://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Regulus_ignicapilla_Arundel.jpg/300px-Regulus_ignicapilla_Arundel.jpg)
+
+## Base-calling
+
+- Bustard
+
+![bustard](http://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Ardeotis_kori_Etosha.JPG/300px-Ardeotis_kori_Etosha.JPG)
+
+## Alignment
+
+- Outside the scope of this course
+- See
+
+# Data formats
+
+## Raw reads
+
+## Aligned reads
+
+- Heaps of aligners available
+
+
+# Why use R and Bioconductor?
+
+## Legacy from the good old days
+- Many of the lessons learnt still applicable
+- Respected software / methods
+- Respected developers
+- Established community
+- Reproducibility
+
+# Other tools worth knowing about
+
+## Non-R tools (that we use every day)
+- bwa
+- bowtie
+- samtools
+- picard
+- fastqc
+- GATK
+- IGV
