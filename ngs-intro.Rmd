@@ -43,62 +43,6 @@ http://core-genomics.blogspot.co.uk/2014/08/seqc-kills-microarrays-not-quite.htm
 ![hadfield-blog](images/hadfield-blog.png)
 
 
-##Are arrays still relevant?
-- We seem to be at the tipping point
-
-http://jermdemo.blogspot.co.uk/2012/01/when-can-we-expect-last-damn-microarray.html
-
-
-```{r echo=FALSE,eval=FALSE}
-##code from http://jermdemo.blogspot.co.uk/2012/01/when-can-we-expect-last-damn-microarray.html
-
-library("plyr")
-library("XML")
-library("ggplot2")
-library(reshape2) 
-
-#Concatenate SQL-style
-concat<-function(...,sep="",collapse=NULL){
-  strings<-list(...)
-  #NULL, NA
-  if(
-    all(unlist(llply(strings,length))>0)
-    &&
-      all(!is.na(unlist(strings)))
-    ){
-    do.call("paste", c(strings, list(sep = sep, collapse = collapse)))
-  }else{
-    NULL
-  }
-}
-                
-getCount<-function(term){function(year){
-  nihUrl<-concat("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=",term,"+",year,"[pdat]")
-  #cleanurl<-gsub('\\]','%5D',gsub('\\[','%5B',x=url))
-  #http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=microarray%5btitle%5d+2003%5bpdat%5d
-  xml<-xmlTreeParse(URLencode(nihUrl),isURL=TRUE)
-  #Data Mashups in R, pg17
-  as.numeric(xmlValue(xml$doc$children$eSearchResult$children$Count$children$text))
-}}
- 
-years<-1995:2014
-df<-data.frame(type="obs",year=years,
-    Microarray=sapply(years,function(x){do.call(getCount('microarray[title]'),list(x))}),
-    NGS=sapply(years,function(x){do.call(getCount('"next generation sequencing"[title] OR "high-throughput sequencing"[title]'),list(x))})
-)
-
-df<-subset(df,year>=1997)
-mdf<-melt(df,id.vars=c("type","year"),variable_name="citation")
- 
-c<-ggplot(mdf,aes(x=year))
-p<-c+geom_point(aes(y=value,color=variable),size=3) +
-  ylab("papers") +
-  stat_smooth(aes(y=value,color=variable),data=subset(mdf,variable=="Microarray"),method="loess") +
-  scale_x_continuous(breaks=seq(from=1997,to=2014,by=2))
-print(p)
-
-```
-
 
 # What are NGS data?
 
@@ -118,6 +62,10 @@ print(p)
 ## Illumina sequencing *
 
 - Link to video from their site
+
+<iframe width="560" height="315" src="http://www.youtube.com/embed/HMyCqWhwB8E?iframe&rel=0" frameborder="0" allowfullscreen></iframe>
+
+http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumina_sequencing_introduction.pdf
 
 \* Other sequencing technologies are available
 
@@ -161,6 +109,14 @@ print(p)
 - Respected developers
 - Established community
 - Reproducibility
+
+## Useful data types in R
+- data frame 
+- classes for storing metadata
+
+## Analysis methods
+
+
 
 # Other tools worth knowing about
 
