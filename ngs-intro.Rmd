@@ -34,6 +34,10 @@ Around 48,000 genes per sample, 12 samples on a slide
 - Relative costs
 - Access to equipment 
 
+## The cost of sequencing
+
+![costs](images/DNA_Sequencing_Cost_per_Genome_Over_Time.jpg)
+
 ##Reports of the death of microarrays
 
 ![microarray-dead](images/microarray-dead.png)
@@ -46,18 +50,13 @@ http://core-genomics.blogspot.co.uk/2014/08/seqc-kills-microarrays-not-quite.htm
 
 # What are NGS data?
 
+
 ## Different terminologies
 
 - *N*ext *G*eneration *S*equencing
 - *H*igh-*T*hroughput *S*equencing
 
-## Different technologies
 
-![gen2seq](https://en.wikipedia.org/wiki/Cancer_genome_sequencing#/media/File:2nd_Generation_Sequencing.png)
-
-## Different technologies
-
-![gen3seq](https://en.wikipedia.org/wiki/Cancer_genome_sequencing#/media/File:3rd_Generation_Sequencing.png)
 
 ## Different Flavours
 
@@ -97,13 +96,14 @@ http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumi
 
 http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumina_sequencing_introduction.pdf
 
-## Illumina sequencing
 
-![seq4](images/illuminaSeq4.png)
 
-http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumina_sequencing_introduction.pdf
+## Image processing 
 
-# Bioinformatics Issues
+- Sequencing produces *gazillions* of high-resolution TIFF images; not unlike microarray data
+- One per-cluster, per-cycle, per-base
+
+![cluster](images/c6vllanxx_c001_l1_t001_bot_s1_a.jpg)
 
 ## Image processing
 
@@ -116,7 +116,8 @@ http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumi
 
     + http://openwetware.org/wiki/BioMicroCenter:IlluminaDataPipeline
 - **You will never have to do this**
-
+    + In fact, the TIFF images are deleted by the instrument
+    
 ## Base-calling
 
 - Bustard
@@ -129,34 +130,90 @@ http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumi
 
 ## Alignment
 
+- Locating where each generated sequence came from in the genome
 - Outside the scope of this course
-- See
+- *Usually* perfomed automatically by a sequencing service
+- For most of what follows in the course, we will assume alignment has been performed and we are dealing with aligned data
 
 # Data formats
 
-## Raw reads - fasta
-
-- fasta
-
 ## Raw reads - fastq
 
-- fastq
+- The most basic file type you will see is *fastq*
+- This represents the *un-aligned* sequences
+- Each sequence is described over 4 lines
+- No standard file extension. *.fq*, *.fastq*, *.sequence.txt*
+- Essentially they are text files
+- They can be compressed and appear as *.fq.gz*
+
+```
+@SEQ_ID
+GATTTGGGGTTCAAAGCAGTATCGATCAAATAGTAAATCCATTTGTTCAACTCACAGTTT
++
+!''*((((***+))%%%++)(%%%%).1***-+*''))**55CCF>>>>>>CCCCCCC65
+```
+
+## Fastq sequence names
+
+```
+@HWUSI-EAS100R:6:73:941:1973#0/1
+```
+
+- The name of the sequencer (HWUSI-EAS100R)
+- The flow cell lane (6)
+- Tile number with the lane (73)
+- x co-ordinate within the tile (941)
+- y co-ordinate within the tile (1973)
+- \#0 index number for a multiplexed sample 
+-  /1; the member of a pair, /1 or /2 (paired-end or mate-pair reads only)
+
+## Fastq quality scores
+
+![phred](images/phred.png)
 
 ## Aligned reads - sam
 
 - **S**equence **A**lignment **M**atrix (sam)
+- Human readable format
+
+```
+head mysequences.sam
+```
+
+
+
+- Large size on disk
 
 ## Aligned reads - bam
 
 - A *binary* version of sam
+- Can no-longer read
+- 
+
+```
+samtools view mysequences.bam | head
+```
 
 ## Aligned reads
 
 - bam files can be indexed
 
+# Other processing steps
+
+## Sorting a bam file
+
 ## Marking Duplicates
 
 ## Quality metrics
+
+- Depth of sequencing
+- Coverage
+
+## A very useful tool
+
+- FastQC, from Babraham Bioinformatics Core
+
+![fastqc](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc.png)
 
 # Why use R and Bioconductor?
 
