@@ -1,7 +1,7 @@
 ---
 title: "Introduction to NGS analysis with R"
 author: "Mark Dunning"
-date: "13 May 2015"
+date: "1 June 2015"
 output: slidy_presentation
 toc: true
 ---
@@ -51,6 +51,14 @@ http://core-genomics.blogspot.co.uk/2014/08/seqc-kills-microarrays-not-quite.htm
 - *N*ext *G*eneration *S*equencing
 - *H*igh-*T*hroughput *S*equencing
 
+## Different technologies
+
+![gen2seq](https://en.wikipedia.org/wiki/Cancer_genome_sequencing#/media/File:2nd_Generation_Sequencing.png)
+
+## Different technologies
+
+![gen3seq](https://en.wikipedia.org/wiki/Cancer_genome_sequencing#/media/File:3rd_Generation_Sequencing.png)
+
 ## Different Flavours
 
 - RNA-seq
@@ -58,6 +66,8 @@ http://core-genomics.blogspot.co.uk/2014/08/seqc-kills-microarrays-not-quite.htm
 - Exome-seq
 - etc....
 - Paired-end / single-end
+
+
 
 ## Illumina sequencing *
 
@@ -71,7 +81,27 @@ http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumi
 
 ## Illumina sequencing
 
-\* Other sequencing technologies are available
+![seq1](images/illuminaSeq1.png)
+
+http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumina_sequencing_introduction.pdf
+
+## Illumina sequencing
+
+![seq2](images/illuminaSeq2.png)
+
+http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumina_sequencing_introduction.pdf
+
+## Illumina sequencing
+
+![seq3](images/illuminaSeq3.png)
+
+http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumina_sequencing_introduction.pdf
+
+## Illumina sequencing
+
+![seq4](images/illuminaSeq4.png)
+
+http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumina_sequencing_introduction.pdf
 
 # Bioinformatics Issues
 
@@ -81,11 +111,21 @@ http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumi
 
 ![firecrest](http://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Regulus_ignicapilla_Arundel.jpg/300px-Regulus_ignicapilla_Arundel.jpg)
 
+
+- *"Uses the raw TIF files to locate clusters on the image, and outputs the cluster intensity, X,Y positions, and an estimate of the noise for each cluster. The output from image analysis provides the input for base calling."*
+
+    + http://openwetware.org/wiki/BioMicroCenter:IlluminaDataPipeline
+- **You will never have to do this**
+
 ## Base-calling
 
 - Bustard
 
 ![bustard](http://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Ardeotis_kori_Etosha.JPG/300px-Ardeotis_kori_Etosha.JPG)
+
+- *"Uses cluster intensities and noise estimate to output the sequence of bases read from each cluster, along with a confidence level for each base."*
+    + http://openwetware.org/wiki/BioMicroCenter:IlluminaDataPipeline
+- **You will never have to do this**
 
 ## Alignment
 
@@ -94,12 +134,29 @@ http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumi
 
 # Data formats
 
-## Raw reads
+## Raw reads - fasta
+
+- fasta
+
+## Raw reads - fastq
+
+- fastq
+
+## Aligned reads - sam
+
+- **S**equence **A**lignment **M**atrix (sam)
+
+## Aligned reads - bam
+
+- A *binary* version of sam
 
 ## Aligned reads
 
-- Heaps of aligners available
+- bam files can be indexed
 
+## Marking Duplicates
+
+## Quality metrics
 
 # Why use R and Bioconductor?
 
