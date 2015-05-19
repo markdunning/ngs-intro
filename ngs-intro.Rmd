@@ -55,7 +55,8 @@ http://core-genomics.blogspot.co.uk/2014/08/seqc-kills-microarrays-not-quite.htm
 
 - *N*ext *G*eneration *S*equencing
 - *H*igh-*T*hroughput *S*equencing
-
+- 2nd Generation Sequencing
+- Massively Parallel Sequencing
 
 
 ## Different Flavours
@@ -152,6 +153,8 @@ GATTTGGGGTTCAAAGCAGTATCGATCAAATAGTAAATCCATTTGTTCAACTCACAGTTT
 +
 !''*((((***+))%%%++)(%%%%).1***-+*''))**55CCF>>>>>>CCCCCCC65
 ```
+~ 250 Million reads (sequences) per Hi-Seq lane
+- Same format regardless of sequencing protocol (i.e. RNA-seq, ChIP-seq, DNA-seq etc)
 
 ## Fastq sequence names
 
@@ -180,15 +183,12 @@ GATTTGGGGTTCAAAGCAGTATCGATCAAATAGTAAATCCATTTGTTCAACTCACAGTTT
 head mysequences.sam
 ```
 
-
-
-- Large size on disk
+- Large size on disk; ~100s of Gb
 
 ## Aligned reads - bam
 
 - A *binary* version of sam
-- Can no-longer read
-- 
+- Attempting to read will print garbage to the screen
 
 ```
 samtools view mysequences.bam | head
