@@ -209,7 +209,12 @@ CC:Z:chr15      CP:i:102518319  XS:A:+  HI:i:0
 
 ## Sam file flags
 
-
+- Represent useful QC information
+    + Read is unmapped
+    + Read is paired / unpaired
+    + Read failed QC
+    + Read is a PCR duplicate (see later...)
+- https://broadinstitute.github.io/picard/explain-flags.html
 
 ## Aligned reads - bam
 
