@@ -146,6 +146,7 @@ http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumi
 - No standard file extension. *.fq*, *.fastq*, *.sequence.txt*
 - Essentially they are text files
 - They can be compressed and appear as *.fq.gz*
+- Same format regardless of sequencing protocol (i.e. RNA-seq, ChIP-seq, DNA-seq etc)
 
 ```
 @SEQ_ID
@@ -154,7 +155,6 @@ GATTTGGGGTTCAAAGCAGTATCGATCAAATAGTAAATCCATTTGTTCAACTCACAGTTT
 !''*((((***+))%%%++)(%%%%).1***-+*''))**55CCF>>>>>>CCCCCCC65
 ```
 ~ 250 Million reads (sequences) per Hi-Seq lane
-- Same format regardless of sequencing protocol (i.e. RNA-seq, ChIP-seq, DNA-seq etc)
 
 ## Fastq sequence names
 
@@ -176,31 +176,56 @@ GATTTGGGGTTCAAAGCAGTATCGATCAAATAGTAAATCCATTTGTTCAACTCACAGTTT
 
 ## Aligned reads - sam
 
-- **S**equence **A**lignment **M**atrix (sam)
-- Human readable format
+- **S**equence **A**lignment **M**atrix (sam) http://samtools.github.io/hts-specs/SAMv1.pdf
+- *Header* lines followed by tab-delimited lines
 
 ```
-head mysequences.sam
+@HD     VN:1.0  SO:coordinate
+@SQ     SN:chr1 LN:249250621
+@SQ     SN:chr10        LN:135534747
+@SQ     SN:chr11        LN:135006516
 ```
+
+
+```
+HWI-ST1001:137:C12FPACXX:7:1115:14131:66670     0       chr1    12805   1       42M4I5M *
+0       0       TTGGATGCCCCTCCACACCCTCTTGATCTTCCCTGTGATGTCACCAATATG     
+CCCFFFFFHHGHHJJJJJHJJJJJJJJJJJJJJJJIJJJJJJJJJJJJIJJ     
+AS:i:-28        XN:i:0  XM:i:2  XO:i:1XG:i:4   NM:i:6  MD:Z:2C41C2     YT:Z:UU NH:i:3  
+CC:Z:chr15      CP:i:102518319  XS:A:+  HI:i:0
+
+```
+
+- http://homer.salk.edu/homer/basicTutorial/samfiles.html
+
 
 - Large size on disk; ~100s of Gb
 
+## Sam format - key columns
+
+- Read name
+- Chromosome
+- Position
+
+## Sam file flags
+
+
+
 ## Aligned reads - bam
 
-- A *binary* version of sam
+- *Exactly* the same information as a sam file
+- ..except that it is *binary* version of sam
 - Attempting to read will print garbage to the screen
 
 ```
 samtools view mysequences.bam | head
 ```
 
-## Aligned reads
+## Aligned reads - bam
 
 - bam files can be indexed
 
 # Other processing steps
-
-## Sorting a bam file
 
 ## Marking Duplicates
 
@@ -230,6 +255,7 @@ samtools view mysequences.bam | head
 
 ## Analysis methods
 
+- e.g. limma
 
 
 # Other tools worth knowing about
