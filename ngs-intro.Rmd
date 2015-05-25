@@ -2,8 +2,8 @@
 title: "Introduction to NGS analysis with R"
 author: "Mark Dunning"
 date: "1 June 2015"
-output: slidy_presentation
-toc: true
+output: html_document
+toc: yes
 ---
 
 #Historical overview
@@ -21,23 +21,26 @@ toc: true
 ![one-colour](images/one-colour.png)
 
 ## Look at a 'modern' microarray
-
 ![illumina-chips](images/chiptypes.png)
 
-Around 48,000 genes per sample, 12 samples on a slide
+- Around 48,000 genes per sample, 12 samples on a slide
 
-## Microarray success stories
+## Use in cancer research
+
+- Extensive use in profiling of cancer patients and defining disease subtypes
 
 ![heatmap](images/Heatmap.png)
-
 ![km](images/Km_plot.jpg)
 
 ##Microarrays vs sequencing
 
 - Probe design issues
+    + *'Dorian Gray effect'* http://www.biomedcentral.com/1471-2105/5/111
+    + ' ...mappings are frozen, as a Dorian Gray-like syndrome: the apparent eternal youth of the mapping does not reflect that somewhere the 'picture of it' decays'
 - Limited number of novel findings
+    + can't find what you're not looking for!
 - Genome coverage
-- Relative costs
+    + some areas of genome are problematic to design probes for
 - Access to equipment 
 - Maturity of analysis techniques
 
@@ -50,7 +53,9 @@ Around 48,000 genes per sample, 12 samples on a slide
 ![microarray-dead](images/microarray-dead.png)
 
 ##Reports of the death of microarrays. Greatly exagerated?
+
 http://core-genomics.blogspot.co.uk/2014/08/seqc-kills-microarrays-not-quite.html
+
 ![hadfield-blog](images/hadfield-blog.png)
 
 
@@ -80,7 +85,7 @@ http://core-genomics.blogspot.co.uk/2014/08/seqc-kills-microarrays-not-quite.htm
 
 - Link to video from their site
 
-<iframe width="420" height="315" src="https://www.youtube.com/embed/7gYIs7uYbMo" frameborder="0" allowfullscreen></iframe>
+<iframe width="420" height="315" src="https://www.youtube.com/embed/HMyCqWhwB8E" frameborder="0" allowfullscreen></iframe>
 
 http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumina_sequencing_introduction.pdf
 
@@ -108,8 +113,10 @@ http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumi
 
 ## Image processing 
 
-- Sequencing produces *gazillions* of high-resolution TIFF images; not unlike microarray data
-- One per-cluster, per-cycle, per-base
+- Sequencing produces high-resolution TIFF images; not unlike microarray data
+- 100 tiles per lane, 8 lanes per flow cell, 100 cycles
+- 4 images (A,G,C,T) per tile per cycle = 320,000 images
+- Each *TIFF* image ~ 7Mb = 2,240,000 Mb of data (**2.24TB**)
 
 ![cluster](images/c6vllanxx_c001_l1_t001_bot_s1_a.jpg)
 
@@ -142,6 +149,28 @@ http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumi
 - Outside the scope of this course
 - *Usually* perfomed automatically by a sequencing service
 - For most of what follows in the course, we will assume alignment has been performed and we are dealing with aligned data
+    + Popular aligners
+    + bwa http://bio-bwa.sourceforge.net/
+    + bowtie http://bowtie-bio.sourceforge.net/index.shtml
+    + novoalign http://www.novocraft.com/products/novoalign/
+    + stampy http://www.well.ox.ac.uk/project-stampy
+    + many, many more.....
+
+## Post-processing of aligned files
+
+- Marking of PCR duplicates
+    + PCR amplification errors can cause some sequences to be over-represented
+    + Chances of any two sequences aligning to the same position are *unlikely*
+    + Caveat: obviously this depends on amount of the genome you are capturing
+    + Such reads are *marked* but not usually removed from the data
+    + Most downstream methods will ignore such reads
+    + Typically, *picard* is used 
+- Sorting
+    + Reads can be sorted according to genomic position
+- Indexing
+    + Allow efficient access
+
+
 
 # Data formats
 
@@ -179,9 +208,29 @@ GATTTGGGGTTCAAAGCAGTATCGATCAAATAGTAAATCCATTTGTTCAACTCACAGTTT
 
 ## Fastq quality scores
 
+```
+!''*((((***+))%%%++)(%%%%).1***-+*''))**55CCF>>>>>>CCCCCCC65
+```
+
+- Quality scores $$ Q = -10log_{10}p$$
+    + Q = 30, p=0.001
+    + Q = 20, p=0.01
+    + Q = 10, p=0.1
+- These numeric quanties are *encoded* as **ASCII** code
+    + Sometimes as offset is used before encoding
+
 ## Fastq quality scores
 
 ![phred](images/phred.png)
+
+## Useful for quality control
+
+- FastQC, from Babraham Bioinformatics Core; http://www.bioinformatics.babraham.ac.uk/projects/fastqc/
+
+![fastqc](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc.png)
+
+- Based on these plots we may want to *trim* our data
+    + A popular choice is *trimmomatic* http://www.usadellab.org/cms/index.php?page=trimmomatic
 
 ## Aligned reads - sam
 
@@ -209,12 +258,27 @@ CC:Z:chr15      CP:i:102518319  XS:A:+  HI:i:0
 
 
 - Large size on disk; ~100s of Gb
+    + Can be manipulated with standard unix tools; e.g. *cat*, *head*, *grep*, *more*, *less*
 
 ## Sam format - key columns
-- screenshot here...
-- Read name
-- Chromosome
-- Position
+
+```
+HWI-ST1001:137:C12FPACXX:7:1115:14131:66670     0       chr1    12805   1       42M4I5M *
+0       0       TTGGATGCCCCTCCACACCCTCTTGATCTTCCCTGTGATGTCACCAATATG     
+CCCFFFFFHHGHHJJJJJHJJJJJJJJJJJJJJJJIJJJJJJJJJJJJIJJ     
+AS:i:-28        XN:i:0  XM:i:2  XO:i:1XG:i:4   NM:i:6  MD:Z:2C41C2     YT:Z:UU NH:i:3  
+CC:Z:chr15      CP:i:102518319  XS:A:+  HI:i:0
+
+```
+
+![sam](images/sam-format.png)
+
+- http://samtools.github.io/hts-specs/SAMv1.pdf
+    + Read name
+    + Chromosome
+    + Position
+    + Mapping quality
+    + etc...
 
 ## Sam file flags
 
@@ -222,76 +286,187 @@ CC:Z:chr15      CP:i:102518319  XS:A:+  HI:i:0
     + Read is unmapped
     + Read is paired / unpaired
     + Read failed QC
-    + Read is a PCR duplicate (see later...)
+    + Read is a PCR duplicate 
 - https://broadinstitute.github.io/picard/explain-flags.html
-- Put screenshot here
 
-## samtools flagstat
+![sam-flags](images/sam-flags.png)
 
 ## Aligned reads - bam
 
 - *Exactly* the same information as a sam file
 - ..except that it is *binary* version of sam
+- compressed around x4
 - Attempting to read will print garbage to the screen
 - bam files can be indexed
+    + Produces an index file with the same name as the bam file, but with **.bai** extension
 
 ```
 samtools view mysequences.bam | head
 ```
 
+## samtools flagstat
+
+- Useful *command-line* tool as part of **samtools**
+
+```
+$ samtools flagstat NA19914.chr22.bam
+2109857 + 0 in total (QC-passed reads + QC-failed reads)
+0 + 0 secondary
+0 + 0 supplimentary
+40096 + 0 duplicates
+2064356 + 0 mapped (97.84%:-nan%)
+2011540 + 0 paired in sequencing
+1005911 + 0 read1
+1005629 + 0 read2
+1903650 + 0 properly paired (94.64%:-nan%)
+1920538 + 0 with itself and mate mapped
+45501 + 0 singletons (2.26%:-nan%)
+5134 + 0 with mate mapped to a different chr
+4794 + 0 with mate mapped to a different chr (mapQ>=5)
+
+```
+
+
+
 ## Aligned files in IGV
 
-## Marking Duplicates
+- Once our bam files have been *indexed* we can view them in IGV
+- This is **highly recommended**
 
-## Quality metrics
+![igv](images/igv_screenshot1.png)
 
-- Depth of sequencing
-- Coverage
 
-## A very useful tool
 
-- FastQC, from Babraham Bioinformatics Core
-
-![fastqc](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc.png)
 
 # Why use R and Bioconductor?
 
 ## Legacy from the good old days
 - Many of the lessons learnt still applicable
+    + Still need to do quality assessment, normalisation, statistical testing etc
+    + Not to mention **Experimental Design** (see later)
 - Respected software / methods
+- Packages to access genome annotation
 - Respected developers
 - Established community
+- Publication-quality graphs are possible
 - Reproducibility
 
 ## Why reproducibility?
+- Others should be able to repeat our analyses and come to same conclusions
+- If they can't, there can be problems
+- Time for *Forensic Bioinformatics*
 
-<iframe width="560" height="315" src="https://www.youtube.com/watch?v=7gYIs7uYbMo?iframe&rel=0" frameborder="0" allowfullscreen></iframe>
-https://www.youtube.com/watch?v=7gYIs7uYbMo
+<iframe width="560" height="315" src="https://www.youtube.com/embed/7gYIs7uYbMo" frameborder="0" allowfullscreen></iframe>
 
 
 ## Useful data types in R
-- data frame 
-- classes for storing metadata
+
+- A data-frame-like structure with *'genes'* as rows and samples as columns
+
+
+```{r echo=FALSE,include=FALSE}
+suppressPackageStartupMessages(library(breastCancerNKI))
+data(nki)
+```
+
+```{r message=FALSE}
+nki
+```
+
+## Data visualisation
+```{r echo=FALSE}
+expressionMatrix <- exprs(nki)[,1:30]
+```
+
+- We can check for biases and errors using a *boxplot*
+```{r}
+boxplot(expressionMatrix,outline=FALSE)
+```
+
 
 ## Analysis methods
 
-- e.g. limma example
+```{r echo=FALSE}
+myRow <- grep("ESR1", fData(nki)$NCBI.gene.symbol)
+myGroup <- pData(nki)$er
+geneExpression <- exprs(nki)[myRow,]
+```
+
+- With data in this format, we can easily perform statistical testing
+
+```{r}
+geneExpression[1:10]
+myGroup[1:10]
+
+t.test(geneExpression,myGroup)
+```
+
+- limma is highly-regarded method for analysing differential expression
+    + It needs a gene expression matrix and experimental design
+
+
 
 ## Clustering example
 
-## Non-R tools (that we use every day)
-- bwa
-- bowtie
-- samtools
-- picard
-- fastqc
-- GATK
-- IGV
+```{r echo=FALSE}
+expressionMatrix <- exprs(nki)
+naCols <- apply(expressionMatrix, 1, function(x) any(is.na(x)))
+expressionMatrix <- expressionMatrix[-which(naCols),]
+sampleCols <- ifelse(myGroup == 1, "red","blue")
+```
+
+```{r}
+dist <- dist(t(expressionMatrix))
+clust <- hclust(dist)
+plot(clust)
+```
+
+## Principal Components Analysis
+
+```{r}
+pca <- prcomp(dist)
+plot(pca$rotation[,1],pca$rotation[,2],col=sampleCols,pch=16)
+```
+
+## Heatmaps
+
+```{r echo=FALSE}
+suppressPackageStartupMessages(library(genefilter))
+expressionMatrix <- exprs(nki)
+naCols <- apply(expressionMatrix, 1, function(x) any(is.na(x)))
+expressionMatrix <- expressionMatrix[-which(naCols),]
+sampleCols <- ifelse(myGroup == 1, "red","blue")
+all.ts <- rowttests(expressionMatrix,factor(myGroup))
+topDE <- order(abs(all.ts),decreasing = TRUE)[1:25]
+```
+
+```{r}
+heatmap(as.matrix(expressionMatrix[topDE,]),ColSideColors = sampleCols)
+```
+
+## Conclusion
+
+- Having data in this tabular format opens-up the possibility of analysis in Bioconductor
++ Re-using existing methods is a *good thing*
+- *Heavy-lifting* and computationally-expensive tasks are usually performed in another language / tool
+- If we have aligned data then we are only a couple of steps away
+    + *Count* number of reads assigned to each gene, exon, whatever intervals you like
+    + Normalise, quality assessment etc
+
 
 ## Course overview
 
-- Representing and importing data
+- Representing and importing data; *fastq* and *bam*
 - Statistical foundations
-- RNA-seq
-- Geneome Annotation
-- ChIP
+- RNA-seq; *differential expression*
+- Genome Annotation
+- ChIP-seq
+- Hopefully we will cover enough of the Bioconductor basics that you can try out other packages. See here for full list;
+    + http://bioconductor.org/packages/release/BiocViews.html#___Sequencing
+    + http://bioconductor.org/developers/new_packages/
+        + Don't forget that each package has a *vignette*
+- Also 
+    + http://seqanswers.com/forums/index.php
+    + https://www.biostars.org/
+    
+Practical 1: Introduction to Bioconductor
