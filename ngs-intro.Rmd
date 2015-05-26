@@ -2,7 +2,7 @@
 title: "Introduction to NGS analysis with R"
 author: "Mark Dunning"
 date: "1 June 2015"
-output: html_document
+output: slidy_presentation
 toc: yes
 ---
 
@@ -31,6 +31,8 @@ toc: yes
 
 ![heatmap](images/Heatmap.png)
 ![km](images/Km_plot.jpg)
+
+- But is there a better way?
 
 ##Microarrays vs sequencing
 
@@ -83,7 +85,7 @@ http://core-genomics.blogspot.co.uk/2014/08/seqc-kills-microarrays-not-quite.htm
 
 ## Illumina sequencing *
 
-- Link to video from their site
+- Employs a *'sequencing-by-synthesis'* approach
 
 <iframe width="420" height="315" src="https://www.youtube.com/embed/HMyCqWhwB8E" frameborder="0" allowfullscreen></iframe>
 
@@ -177,6 +179,7 @@ http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumi
 ## Raw reads - fastq
 
 - The most basic file type you will see is *fastq*
+    + Data in public-repositories (e.g. Short Read Archive, GEO) tend to be in this format
 - This represents the *un-aligned* sequences
 - Each sequence is described over 4 lines
 - No standard file extension. *.fq*, *.fastq*, *.sequence.txt*
@@ -236,7 +239,7 @@ GATTTGGGGTTCAAAGCAGTATCGATCAAATAGTAAATCCATTTGTTCAACTCACAGTTT
 
 - **S**equence **A**lignment **M**atrix (sam) http://samtools.github.io/hts-specs/SAMv1.pdf
 - *Header* lines followed by tab-delimited lines
-
+    + Header gives information about the alignment and references sequences used
 ```
 @HD     VN:1.0  SO:coordinate
 @SQ     SN:chr1 LN:249250621
@@ -304,6 +307,8 @@ CC:Z:chr15      CP:i:102518319  XS:A:+  HI:i:0
 samtools view mysequences.bam | head
 ```
 
+- N.B The sequences can be extracted by various tools to give *fastq*
+
 ## samtools flagstat
 
 - Useful *command-line* tool as part of **samtools**
@@ -353,7 +358,7 @@ $ samtools flagstat NA19914.chr22.bam
 
 ## Why reproducibility?
 - Others should be able to repeat our analyses and come to same conclusions
-- If they can't, there can be problems
+- If they can't, there can be problems.....
 - Time for *Forensic Bioinformatics*
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/7gYIs7uYbMo" frameborder="0" allowfullscreen></iframe>
@@ -378,7 +383,7 @@ nki
 expressionMatrix <- exprs(nki)[,1:30]
 ```
 
-- We can check for biases and errors using a *boxplot*
+- We can check for biases and outliers using a *boxplot*
 ```{r}
 boxplot(expressionMatrix,outline=FALSE)
 ```
