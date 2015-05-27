@@ -43,12 +43,14 @@ toc: yes
     + can't find what you're not looking for!
 - Genome coverage
     + some areas of genome are problematic to design probes for
-- Access to equipment 
 - Maturity of analysis techniques
-
+    + on the other hand, analysis methods and workflows for microarrays are well-established
+    + quicker turn-around time
+    + until recently...
+    
 ## The cost of sequencing
 
-![costs](images/DNA_Sequencing_Cost_per_Genome_Over_Time.jpg)
+![costs](images/seq-costs.png)
 
 ##Reports of the death of microarrays
 
@@ -65,21 +67,21 @@ http://core-genomics.blogspot.co.uk/2014/08/seqc-kills-microarrays-not-quite.htm
 # What are NGS data?
 
 
-## Different terminologies
+## Different terminologies for same thing
 
 - *N*ext *G*eneration *S*equencing
 - *H*igh-*T*hroughput *S*equencing
 - 2nd Generation Sequencing
 - Massively Parallel Sequencing
+- Also different library preparation
+    + RNA-seq *
+    + ChIP-seq *
+    + Exome-seq
+    + DNA-seq
+    + Methyl-seq
+    + .....
+* covered in this course
 
-
-## Different Flavours
-
-- RNA-seq
-- ChIP-seq
-- Exome-seq
-- etc....
-- Paired-end / single-end
 
 
 
@@ -111,6 +113,13 @@ http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumi
 
 http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumina_sequencing_introduction.pdf
 
+## Paired-end
+
+![seq4](images/paired-end.png)
+
+
+## Multiplexing
+![seq5](images/pooling.png)
 
 
 ## Image processing 
@@ -180,12 +189,13 @@ http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumi
 
 - The most basic file type you will see is *fastq*
     + Data in public-repositories (e.g. Short Read Archive, GEO) tend to be in this format
-- This represents the *un-aligned* sequences
+- This represents all sequences created after imaging process
 - Each sequence is described over 4 lines
 - No standard file extension. *.fq*, *.fastq*, *.sequence.txt*
 - Essentially they are text files
 - They can be compressed and appear as *.fq.gz*
 - Same format regardless of sequencing protocol (i.e. RNA-seq, ChIP-seq, DNA-seq etc)
+    + Can be manipulated with standard unix tools; e.g. *cat*, *head*, *grep*, *more*, *less*
 
 ```
 @SEQ_ID
