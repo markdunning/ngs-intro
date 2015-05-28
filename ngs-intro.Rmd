@@ -36,10 +36,13 @@ toc: yes
 
 ##Microarrays vs sequencing
 
-- Probe design issues
+- Probe design issues with microarrays
     + *'Dorian Gray effect'* http://www.biomedcentral.com/1471-2105/5/111
     + ' ...mappings are frozen, as a Dorian Gray-like syndrome: the apparent eternal youth of the mapping does not reflect that somewhere the 'picture of it' decays'
-- Limited number of novel findings
+- Sequencing data are 'future proof'
+    + if a new genome version comes along, just re-align the data!
+    + can grab published-data from public repositories and re-align to *your* own choice of genome / transcripts
+- Limited number of novel findings from microarays
     + can't find what you're not looking for!
 - Genome coverage
     + some areas of genome are problematic to design probes for
