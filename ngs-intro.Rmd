@@ -33,6 +33,7 @@ toc: yes
 ![km](images/Km_plot.jpg)
 
 - But is there a better way?
+    + sequencing technologies have been around since the 70s, but traditionally time-consuming and low-throughput
 
 ##Microarrays vs sequencing
 
@@ -41,14 +42,13 @@ toc: yes
     + ' ...mappings are frozen, as a Dorian Gray-like syndrome: the apparent eternal youth of the mapping does not reflect that somewhere the 'picture of it' decays'
 - Sequencing data are 'future proof'
     + if a new genome version comes along, just re-align the data!
-    + can grab published-data from public repositories and re-align to *your* own choice of genome / transcripts
+    + can grab published-data from public repositories and re-align to **your** own choice of genome / transcripts and aligner
 - Limited number of novel findings from microarays
     + can't find what you're not looking for!
 - Genome coverage
     + some areas of genome are problematic to design probes for
 - Maturity of analysis techniques
     + on the other hand, analysis methods and workflows for microarrays are well-established
-    + quicker turn-around time
     + until recently...
     
 ## The cost of sequencing
@@ -83,7 +83,7 @@ http://core-genomics.blogspot.co.uk/2014/08/seqc-kills-microarrays-not-quite.htm
     + DNA-seq
     + Methyl-seq
     + .....
-* covered in this course
+
 
 
 
@@ -196,9 +196,9 @@ http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumi
 - Each sequence is described over 4 lines
 - No standard file extension. *.fq*, *.fastq*, *.sequence.txt*
 - Essentially they are text files
+    + Can be manipulated with standard unix tools; e.g. *cat*, *head*, *grep*, *more*, *less*
 - They can be compressed and appear as *.fq.gz*
 - Same format regardless of sequencing protocol (i.e. RNA-seq, ChIP-seq, DNA-seq etc)
-    + Can be manipulated with standard unix tools; e.g. *cat*, *head*, *grep*, *more*, *less*
 
 ```
 @SEQ_ID
@@ -233,7 +233,7 @@ GATTTGGGGTTCAAAGCAGTATCGATCAAATAGTAAATCCATTTGTTCAACTCACAGTTT
     + Q = 20, p=0.01
     + Q = 10, p=0.1
 - These numeric quanties are *encoded* as **ASCII** code
-    + Sometimes as offset is used before encoding
+    + Sometimes an offset is used before encoding
 
 ## Fastq quality scores
 
@@ -363,9 +363,9 @@ $ samtools flagstat NA19914.chr22.bam
     + Still need to do quality assessment, normalisation, statistical testing etc
     + Not to mention **Experimental Design** (see later)
 - Respected software / methods
-- Packages to access genome annotation
 - Respected developers
 - Established community
+- Packages to access genome annotation
 - Publication-quality graphs are possible
 - Reproducibility
 
@@ -380,7 +380,8 @@ $ samtools flagstat NA19914.chr22.bam
 ## Useful data types in R
 
 - A data-frame-like structure with *'genes'* as rows and samples as columns
-
+    + respects usual conventions of subsetting etc
+    + convenient functions for accessing parts of the object. e.g. `exprs` `pData`
 
 ```{r echo=FALSE,include=FALSE}
 suppressPackageStartupMessages(library(breastCancerNKI))
@@ -467,10 +468,11 @@ heatmap(as.matrix(expressionMatrix[topDE,]),ColSideColors = sampleCols)
 - Having data in this tabular format opens-up the possibility of analysis in Bioconductor
 + Re-using existing methods is a *good thing*
 - *Heavy-lifting* and computationally-expensive tasks are usually performed in another language / tool
-- If we have aligned data then we are only a couple of steps away
+- As we will see, we can deal with aligned reads and sequences directly
+- If we have aligned data then we are only a couple of steps away from being able to perform downstream analysis in R
     + *Count* number of reads assigned to each gene, exon, whatever intervals you like
     + Normalise, quality assessment etc
-
+    + statistical testing
 
 ## Course overview
 
