@@ -1,39 +1,12 @@
 ---
 title: "Introduction to NGS analysis with R"
 author: "Mark Dunning"
-date: "1 June 2015"
+date: '`r format(Sys.time(), "Last modified: %d %b %Y")`'
 output: slidy_presentation
 toc: yes
 ---
 
-#Historical overview
-
-## Probe and target
-
-![probe-and-target](images/probe-and-target.png)
-
-## Two-colour arrays
-
-![two-colour](images/two-colour.png)
-
-## Single-Channel
-
-![one-colour](images/one-colour.png)
-
-## Look at a 'modern' microarray
-![illumina-chips](images/chiptypes.png)
-
-- Around 48,000 genes per sample, 12 samples on a slide
-
-## Use in cancer research
-
-- Extensive use in profiling of cancer patients and defining disease subtypes
-
-![heatmap](images/Heatmap.png)
-![km](images/Km_plot.jpg)
-
-- But is there a better way?
-    + sequencing technologies have been around since the 70s, but traditionally time-consuming and low-throughput
+# Why do sequencing?
 
 ##Microarrays vs sequencing
 
@@ -169,6 +142,7 @@ http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumi
     + novoalign http://www.novocraft.com/products/novoalign/
     + stampy http://www.well.ox.ac.uk/project-stampy
     + many, many more.....
+- ***Demo to follow after this talk***
 
 ## Post-processing of aligned files
 
@@ -242,11 +216,14 @@ GATTTGGGGTTCAAAGCAGTATCGATCAAATAGTAAATCCATTTGTTCAACTCACAGTTT
 ## Useful for quality control
 
 - FastQC, from Babraham Bioinformatics Core; http://www.bioinformatics.babraham.ac.uk/projects/fastqc/
+    + ***we will look at this in detail later***
 
 ![fastqc](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc.png)
 
+
 - Based on these plots we may want to *trim* our data
-    + A popular choice is *trimmomatic* http://www.usadellab.org/cms/index.php?page=trimmomatic
+    + A popular choice is ***trimmomatic*** http://www.usadellab.org/cms/index.php?page=trimmomatic
+    + or ***Trim Galore!*** from the makers of FastQC
 
 ## Aligned reads - sam
 
@@ -353,140 +330,3 @@ $ samtools flagstat NA19914.chr22.bam
 
 ![igv](images/igv_screenshot1.png)
 
-
-
-
-# Why use R and Bioconductor?
-
-## Legacy from the good old days
-- Many of the lessons learnt still applicable
-    + Still need to do quality assessment, normalisation, statistical testing etc
-    + Not to mention **Experimental Design** (see later)
-- Respected software / methods
-- Respected developers
-- Established community
-- Packages to access genome annotation
-- Publication-quality graphs are possible
-- Reproducibility
-
-## Why reproducibility?
-- Others should be able to repeat our analyses and come to same conclusions
-- If they can't, there can be problems.....
-- Time for *Forensic Bioinformatics*
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/7gYIs7uYbMo" frameborder="0" allowfullscreen></iframe>
-
-
-## Useful data types in R
-
-- A data-frame-like structure with *'genes'* as rows and samples as columns
-    + respects usual conventions of subsetting etc
-    + convenient functions for accessing parts of the object. e.g. `exprs` `pData`
-
-```{r echo=FALSE,include=FALSE}
-suppressPackageStartupMessages(library(breastCancerNKI))
-data(nki)
-```
-
-```{r message=FALSE}
-nki
-```
-
-## Data visualisation
-```{r echo=FALSE}
-expressionMatrix <- exprs(nki)[,1:30]
-```
-
-- We can check for biases and outliers using a *boxplot*
-```{r}
-boxplot(expressionMatrix,outline=FALSE)
-```
-
-
-## Analysis methods
-
-```{r echo=FALSE}
-myRow <- grep("ESR1", fData(nki)$NCBI.gene.symbol)
-myGroup <- pData(nki)$er
-geneExpression <- exprs(nki)[myRow,]
-```
-
-- With data in this format, we can easily perform statistical testing
-
-```{r}
-geneExpression[1:10]
-myGroup[1:10]
-
-t.test(geneExpression,myGroup)
-```
-
-- limma is highly-regarded method for analysing differential expression
-    + It needs a gene expression matrix and experimental design
-
-
-
-## Clustering example
-
-```{r echo=FALSE}
-expressionMatrix <- exprs(nki)
-naCols <- apply(expressionMatrix, 1, function(x) any(is.na(x)))
-expressionMatrix <- expressionMatrix[-which(naCols),]
-sampleCols <- ifelse(myGroup == 1, "red","blue")
-```
-
-```{r}
-dist <- dist(t(expressionMatrix))
-clust <- hclust(dist)
-plot(clust)
-```
-
-## Principal Components Analysis
-
-```{r}
-pca <- prcomp(dist)
-plot(pca$rotation[,1],pca$rotation[,2],col=sampleCols,pch=16)
-```
-
-## Heatmaps
-
-```{r echo=FALSE}
-suppressPackageStartupMessages(library(genefilter))
-expressionMatrix <- exprs(nki)
-naCols <- apply(expressionMatrix, 1, function(x) any(is.na(x)))
-expressionMatrix <- expressionMatrix[-which(naCols),]
-sampleCols <- ifelse(myGroup == 1, "red","blue")
-all.ts <- rowttests(expressionMatrix,factor(myGroup))
-topDE <- order(abs(all.ts),decreasing = TRUE)[1:25]
-```
-
-```{r}
-heatmap(as.matrix(expressionMatrix[topDE,]),ColSideColors = sampleCols)
-```
-
-## Conclusion
-
-- Having data in this tabular format opens-up the possibility of analysis in Bioconductor
-+ Re-using existing methods is a *good thing*
-- *Heavy-lifting* and computationally-expensive tasks are usually performed in another language / tool
-- As we will see, we can deal with aligned reads and sequences directly
-- If we have aligned data then we are only a couple of steps away from being able to perform downstream analysis in R
-    + *Count* number of reads assigned to each gene, exon, whatever intervals you like
-    + Normalise, quality assessment etc
-    + statistical testing
-
-## Course overview
-
-- Representing and importing data; *fastq* and *bam*
-- Statistical foundations
-- RNA-seq; *differential expression*
-- Genome Annotation
-- ChIP-seq
-- Hopefully we will cover enough of the Bioconductor basics that you can try out other packages. See here for full list;
-    + http://bioconductor.org/packages/release/BiocViews.html#___Sequencing
-    + http://bioconductor.org/developers/new_packages/
-        + Don't forget that each package has a *vignette*
-- Also 
-    + http://seqanswers.com/forums/index.php
-    + https://www.biostars.org/
-    
-Practical 1: Introduction to Bioconductor
