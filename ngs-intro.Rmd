@@ -1,8 +1,9 @@
 ---
-title: "Introduction to NGS analysis with R"
+title: "Introduction to NGS data"
 author: "Mark Dunning"
 date: '`r format(Sys.time(), "Last modified: %d %b %Y")`'
-output: slidy_presentation
+output:
+  slidy_presentation:
 toc: yes
 ---
 
