@@ -153,12 +153,13 @@ http://www.illumina.com/content/dam/illumina-marketing/documents/products/illumi
     + Caveat: obviously this depends on amount of the genome you are capturing
     + Such reads are *marked* but not usually removed from the data
     + Most downstream methods will ignore such reads
-    + Typically, *picard* is used 
+    + Typically, [***picard***](http://broadinstitute.github.io/picard/) is used 
 - Sorting
     + Reads can be sorted according to genomic position
+        + [***samtools***](http://www.htslib.org/)
 - Indexing
     + Allow efficient access
-
+        + [***samtools***](http://www.htslib.org/)
 
 
 # Data formats
@@ -331,3 +332,32 @@ $ samtools flagstat NA19914.chr22.bam
 
 ![igv](images/igv_screenshot1.png)
 
+
+## Other misc. format
+
+Often said that Bioinformaticians love coming up with new file formats
+
+- Useful link : http://www.genome.ucsc.edu/FAQ/FAQformat.html
+- bed ; only first three columns are required
+```    
+track name=pairedReads description="Clone Paired Reads" useScore=1
+chr22 1000 5000 cloneA 960 + 1000 5000 0 2 567,488, 0,3512
+chr22 2000 6000 cloneB 900 - 2000 6000 0 2 433,399, 0,3601 
+```
+- gff; (gene feature format)
+```
+track name=regulatory description="TeleGene(tm) Regulatory Regions"
+visibility=2`
+chr22  TeleGene enhancer  10000000  10001000  500 +  .  touch1
+chr22  TeleGene promoter  10010000  10010100  900 +  .  touch1
+chr22  TeleGene promoter  10020000  10025000  800 -  .  touch2
+```
+- wig;
+```
+variableStep chrom=chr2
+300701 12.5
+300702 12.5
+300703 12.5
+300704 12.5
+300705 12.5
+```    
