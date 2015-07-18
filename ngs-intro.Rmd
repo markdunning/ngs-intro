@@ -361,3 +361,9 @@ variableStep chrom=chr2
 300704 12.5
 300705 12.5
 ```    
+
+## What happens next?
+
+- Hands-on examples of NGS data
+    + Alignment (Shamith)
+    + Quality assessment of NGS data (Ines)
