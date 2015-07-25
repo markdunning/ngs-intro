@@ -2,9 +2,7 @@
 title: "Introduction to NGS data"
 author: "Mark Dunning"
 date: '`r format(Sys.time(), "Last modified: %d %b %Y")`'
-output:
-  slidy_presentation:
-toc: yes
+output: slidy_presentation
 ---
 
 # Why do sequencing?
